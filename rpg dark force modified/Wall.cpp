@@ -145,6 +145,38 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 
 
 		//sky and floor rendering
+		for (int y = WINDOW_HEIGHT - 1; y >= 0; y--)
+		{
+			if (y < nHorizonHeight)
+			{
+				float fRoofProjDistance = (((player.fPlayerH - float(1)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+				float fRoofProjX = player.x + fRoofProjDistance * fCosCurAngle;
+				float fRoofProjY = player.y + fRoofProjDistance * fSinCurAngle;
+
+				int nSampleX = (int)(fRoofProjX) % TILE_SIZE;
+				int nSampleY = (int)(fRoofProjY) % TILE_SIZE;
+				olc::Pixel p = olc::CYAN;
+				//olc::Pixel p = SelectSceneryPixel(1, nSampleX, nSampleY, fDistnace, Side::Roof);
+				PGEptr->Draw(x, y, p);
+
+
+			}
+			else
+			{
+				float fFloorProjDistance = (((TILE_SIZE * player.fPlayerH) / (float)(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+				float fFloorProjX = fPlayerX + fFloorProjDistance * fCosCurAngle;
+				float fFloorProjY = fPlayerY + fFloorProjDistance * fSinCurAngle;
+				float fTILE_SIZE = TILE_SIZE;
+				//while (fFloorProjX < 0.0f) { fFloorProjX += floor(fTILE_SIZE); }
+				//while (fFloorProjY < 0.0f) { fFloorProjY += floor(fTILE_SIZE); }
+				int nSampleX = (int)(fFloorProjX) % TILE_SIZE;
+				int nSampleY = (int)(fFloorProjY) % TILE_SIZE;
+
+				olc::Pixel p = sprites[0].GetPixel(nSampleX, nSampleY);
+				//olc::Pixel p = SelectSceneryPixel(0, nSampleX, nSampleY, fDistnace, Side::Bottom);
+				PGEptr->Draw(x, y, p);
+			}
+		}
 		
 		for (int i = 0; i < rays.rays[x].listinfo.size(); i++)
 		{
@@ -162,38 +194,7 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 				coordY = int(hitRec.wallHitY);
 				fDistnace = hitRec.frontdistance;
 
-				for (int y = WINDOW_HEIGHT - 1; y >= 0; y--)
-				{
-					if (y < nHorizonHeight)
-					{
-						float fRoofProjDistance = (((player.fPlayerH - float(Fcolheight)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
-						float fRoofProjX = player.x + fRoofProjDistance * fCosCurAngle;
-						float fRoofProjY = player.y + fRoofProjDistance * fSinCurAngle;
-
-						int nSampleX = (int)(fRoofProjX) % TILE_SIZE;
-						int nSampleY = (int)(fRoofProjY) % TILE_SIZE;
-						olc::Pixel p = olc::CYAN;
-						//olc::Pixel p = SelectSceneryPixel(1, nSampleX, nSampleY, fDistnace, Side::Roof);
-						PGEptr->Draw(x, y, p);
-
-
-					}
-					else
-					{
-						float fFloorProjDistance = (((TILE_SIZE * player.fPlayerH) / (float)(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
-						float fFloorProjX = fPlayerX + fFloorProjDistance * fCosCurAngle;
-						float fFloorProjY = fPlayerY + fFloorProjDistance * fSinCurAngle;
-						float fTILE_SIZE = TILE_SIZE;
-						//while (fFloorProjX < 0.0f) { fFloorProjX += floor(fTILE_SIZE); }
-						//while (fFloorProjY < 0.0f) { fFloorProjY += floor(fTILE_SIZE); }
-						int nSampleX = (int)(fFloorProjX) % TILE_SIZE;
-						int nSampleY = (int)(fFloorProjY) % TILE_SIZE;
-
-						//olc::Pixel p = sprites[0].GetPixel(nSampleX, nSampleY);
-						olc::Pixel p = SelectSceneryPixel(0, nSampleX, nSampleY, fDistnace, Side::Bottom);
-						PGEptr->Draw(x, y, p);
-					}
-				}
+				
 
 
 				for (int y = nWallCeil2; y < nWallCeil; y++)
