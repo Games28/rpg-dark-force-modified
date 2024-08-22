@@ -19,7 +19,7 @@ struct intersectInfo
 	int height;
 	bool wasHitVertical;
 	float rayAngle;
-	int texture;
+	
 	
 
 	//multilevel flying and crouching
@@ -33,8 +33,7 @@ struct intersectInfo
 
 	int maplevel;
 	float FHeight;
-	//new
-	float fDistanceFront;
+	
 };
 
 
@@ -51,6 +50,7 @@ public:
 	Raycast() = default;
 	void castAllRays(Player& player, Map& map);
 	void castRay(float rayAngle, int stripID,int maplevel, Player& player, Map& map);
+	void Raycasting(float rayAngle,int maplevel, std::vector<intersectInfo>& cur_level_list, Player& player, Map& map);
 	void renderMapRays(olc::PixelGameEngine* PGEptr, Player& player, int testray); // Joseph21 - added testray for debugging
 
 public:

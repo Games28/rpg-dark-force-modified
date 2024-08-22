@@ -40,7 +40,7 @@ void Application::Update(olc::PixelGameEngine* pge, float& fElapsedTime)
 
 
 
-	ray.castAllRays(player, map);
+	//ray.castAllRays(player, map);
 
 	OM.Update(pge, fElapsedTime, map, player);
 	

@@ -7,7 +7,7 @@
 #include "Raycast.h"
 #include "defs.h"
 #include "Map.h"
-
+#include <algorithm>
 
 
 
