@@ -237,20 +237,24 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 				WallTop2 = hitRec.ceil_back; WallTop2 < 0 ? 0 : WallTop2;
 				WallBottom = hitRec.bottom_front; WallBottom > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom;
 				WallBottom2 = hitRec.bottom_back; WallBottom2 > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom2;
-		
-				for (int y = WallTop2; y < WallTop; y++)
+
+				if (WallTop > nHorizonHeight)
 				{
-					float fheight = float(block_level) + fBlockElevation;
-					float fRoofProjDistance = (((player.fPlayerH - float(fheight)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
-					
-					float fRoofProjX = player.x + fRoofProjDistance * fCosCurAngle;
-					float fRoofProjY = player.y + fRoofProjDistance * fSinCurAngle;
-				
-					int nSampleX = (int)(fRoofProjX) % TILE_SIZE;
-					int nSampleY = (int)(fRoofProjY) % TILE_SIZE;
-					olc::Pixel p = sprites[1].GetPixel(nSampleX, nSampleY);
-					//olc::Pixel p = SelectSceneryPixel(1, nSampleX, nSampleY, front_dist, Side::Roof);
-					PGEptr->Draw(x, y, p);
+
+					for (int y = WallTop2; y < WallTop; y++)
+					{
+						float fheight = float(block_level) + fBlockElevation;
+						float fRoofProjDistance = (((player.fPlayerH - float(fheight)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+
+						float fRoofProjX = player.x + fRoofProjDistance * fCosCurAngle;
+						float fRoofProjY = player.y + fRoofProjDistance * fSinCurAngle;
+
+						int nSampleX = (int)(fRoofProjX) % TILE_SIZE;
+						int nSampleY = (int)(fRoofProjY) % TILE_SIZE;
+						olc::Pixel p = sprites[4].GetPixel(nSampleX, nSampleY);
+						//olc::Pixel p = SelectSceneryPixel(1, nSampleX, nSampleY, front_dist, Side::Roof);
+						PGEptr->Draw(x, y, p);
+					}
 				}
 		
 				for (int y = WallTop; y < WallBottom; y++)
