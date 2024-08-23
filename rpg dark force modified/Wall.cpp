@@ -106,6 +106,15 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 
         // work out angle from player perspective belonging to this slice
 		float rayAngle = player.rotationAngle + (x - NUM_RAYS / 2) / (float)(NUM_RAYS)*FOV_ANGLE;
+		float fFoV = 60.0f;
+		float fAngleStep = fFoV / (float)NUM_RAYS;
+		float fViewAngle = (float)(x - (NUM_RAYS / 2)) * fAngleStep;
+		float fCurAngle = (player.rotationAngle * 180.0f / PI) + fViewAngle;
+		float fPlayerX = player.x;
+		float fPlayerY = player.y;
+		float fCosCurAngle = cos(fCurAngle * PI / 180.0f);
+		float fSinCurAngle = sin(fCurAngle * PI / 180.0f);
+		float fCosViewAngle = cos(fViewAngle * PI / 180.0f);
 
 		float fx_hit, fy_hit, fBlockElevation = 1.0f, front_dist, back_dist;
 		int nx_hit, ny_hit, block_level, WallTop, WallTop2, WallBottom, WallBottom2;
@@ -121,7 +130,7 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 
 			for (int i = 0; i < (int)vCurLevelList.size(); i++)
 			{
-				vCurLevelList[i].frontdistance *= cos(rayAngle * PI / 180.0f);
+				vCurLevelList[i].frontdistance *= cos(fViewAngle * PI / 180.0f);
 				calculateBottomAndTop(
 					vCurLevelList[i].frontdistance,
 					nHorizonHeight,
@@ -180,15 +189,7 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 			}
 		);
 
-		float fFoV = 60.0f;
-		float fAngleStep = fFoV / (float)NUM_RAYS;
-		float fViewAngle = (float)(x - (NUM_RAYS / 2)) * fAngleStep;
-		float fCurAngle = (player.rotationAngle * 180.0f / PI) + fViewAngle;
-		float fPlayerX = player.x;
-		float fPlayerY = player.y;
-		float fCosCurAngle = cos(fCurAngle * PI / 180.0f);
-		float fSinCurAngle = sin(fCurAngle * PI / 180.0f);
-		float fCosViewAngle = cos(fViewAngle * PI / 180.0f);
+		
 
 
 		for (int y = WINDOW_HEIGHT - 1; y >= 0; y--)
@@ -232,17 +233,19 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 				front_dist = hitRec.frontdistance;
 				back_dist = hitRec.backdistance;
 		
-				WallTop = hitRec.ceil_front; //WallTop < 0 ? 0 : WallTop;
-				WallTop2 = hitRec.ceil_back; //WallTop2 < 0 ? 0 : WallTop2;
-				WallBottom = hitRec.bottom_front; //WallBottom > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom;
-				WallBottom2 = hitRec.bottom_back; //WallBottom2 > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom2;
+				WallTop = hitRec.ceil_front; WallTop < 0 ? 0 : WallTop;
+				WallTop2 = hitRec.ceil_back; WallTop2 < 0 ? 0 : WallTop2;
+				WallBottom = hitRec.bottom_front; WallBottom > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom;
+				WallBottom2 = hitRec.bottom_back; WallBottom2 > WINDOW_HEIGHT ? WINDOW_HEIGHT : WallBottom2;
 		
 				for (int y = WallTop2; y < WallTop; y++)
 				{
-					float fRoofProjDistance = (((player.fPlayerH - float(fBlockElevation)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+					float fheight = float(block_level) + fBlockElevation;
+					float fRoofProjDistance = (((player.fPlayerH - float(fheight)) * TILE_SIZE / float(y - nHorizonHeight)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+					
 					float fRoofProjX = player.x + fRoofProjDistance * fCosCurAngle;
 					float fRoofProjY = player.y + fRoofProjDistance * fSinCurAngle;
-		
+				
 					int nSampleX = (int)(fRoofProjX) % TILE_SIZE;
 					int nSampleY = (int)(fRoofProjY) % TILE_SIZE;
 					olc::Pixel p = sprites[1].GetPixel(nSampleX, nSampleY);
