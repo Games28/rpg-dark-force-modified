@@ -286,20 +286,22 @@ void Wall::renderWallProjection(olc::PixelGameEngine* PGEptr, Player& player, Ra
 					PGEptr->Draw(x, y, auxSample);
 		
 				}
+				if (WallBottom < nHorizonHeight)
+				{
+					for (int y = WallBottom + 1; y <= WallBottom2; y++)
+					{
+						float fFloorProjDistance = (((1.0f - player.fPlayerH) / (float)(nHorizonHeight - y)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
+						float fFloorProjX = fPlayerX + fFloorProjDistance * fCosCurAngle;
+						float fFloorProjY = fPlayerY + fFloorProjDistance * fSinCurAngle;
+						int nSampleX = (int)(fFloorProjX) % TILE_SIZE;
+						int nSampleY = (int)(fFloorProjY) % TILE_SIZE;
 
-				//for (int y = WallBottom + 1; y <= WallBottom2; y++)
-				//{
-				//	float fFloorProjDistance = (((TILE_SIZE * player.fPlayerH) / (float)(nHorizonHeight - y)) * DIST_TO_PROJ_PLANE) / fCosViewAngle;
-				//	float fFloorProjX = fPlayerX + fFloorProjDistance * fCosCurAngle;
-				//	float fFloorProjY = fPlayerY + fFloorProjDistance * fSinCurAngle;
-				//	int nSampleX = (int)(fFloorProjX) % TILE_SIZE;
-				//	int nSampleY = (int)(fFloorProjY) % TILE_SIZE;
-				//
-				//	olc::Pixel p = sprites[0].GetPixel(nSampleX, nSampleY);
-				//	//olc::Pixel p = SelectSceneryPixel(0, nSampleX, nSampleY, fDistnace, Side::Top);
-				//	PGEptr->Draw(x, y, p);
-				//
-				//}
+						olc::Pixel p = sprites[0].GetPixel(nSampleX, nSampleY);
+						//olc::Pixel p = SelectSceneryPixel(0, nSampleX, nSampleY, fDistnace, Side::Top);
+						PGEptr->Draw(x, y, p);
+
+					}
+				}
 		
 			}
 		}
